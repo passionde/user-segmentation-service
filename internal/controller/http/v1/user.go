@@ -10,13 +10,17 @@ type userRoutes struct {
 }
 
 func newUserRoutes(g *echo.Group, userService service.User) {
-	//r := &userRoutes{
-	//	userService: userService,
-	//}
-	//
-	//g.POST("/create", r.create)
-	//g.POST("/deposit", r.deposit) // POST, а не PUT, потому что неидемпотентно
-	//g.POST("/withdraw", r.withdraw)
-	//g.POST("/transfer", r.transfer)
-	//g.GET("/", r.getBalance)
+	r := &userRoutes{
+		userService: userService,
+	}
+	g.POST("/set-segments", r.setSegments)
+	g.GET("/", r.getSegments)
+}
+
+func (u *userRoutes) setSegments(c echo.Context) error {
+	return nil
+}
+
+func (u *userRoutes) getSegments(c echo.Context) error {
+	return nil
 }

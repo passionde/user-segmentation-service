@@ -10,4 +10,17 @@ type segmentRoutes struct {
 }
 
 func newSegmentRoutes(g *echo.Group, segmentService service.Segment) {
+	r := segmentRoutes{
+		segmentService: segmentService,
+	}
+	g.POST("/create", r.create)
+	g.DELETE("/delete", r.delete)
+}
+
+func (s *segmentRoutes) create(c echo.Context) error {
+	return nil
+}
+
+func (s *segmentRoutes) delete(c echo.Context) error {
+	return nil
 }

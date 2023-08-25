@@ -10,4 +10,12 @@ type historyRoutes struct {
 }
 
 func newHistoryRoutes(g *echo.Group, historyService service.History) {
+	r := historyRoutes{
+		historyService: historyService,
+	}
+	g.GET("/report-link", r.reportLink)
+}
+
+func (h *historyRoutes) reportLink(c echo.Context) error {
+	return nil
 }
