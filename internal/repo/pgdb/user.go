@@ -19,7 +19,49 @@ func NewUserRepo(pg *postgres.Postgres) *UserRepo {
 }
 
 func (u *UserRepo) GetSegments(ctx context.Context, userID string) ([]string, error) {
+	ok, err := u.userExist(ctx, userID)
+	if err != nil {
+		return nil, fmt.Errorf("UserRepo.GetSegments - u.userExist: %v", err)
+	}
+	if !ok {
+		return nil, repoerrs.ErrUserNotFound
+	}
 
+	sql, args, _ := u.Builder.
+		Select("segment_slug").
+		From("user_segments").
+		Where("user_id = ?", userID).
+		ToSql()
+
+	rows, err := u.Pool.Query(ctx, sql, args...)
+	if err != nil {
+		return nil, fmt.Errorf("UserRepo.GetSegments - u.Pool.Query: %v", err)
+	}
+	defer rows.Close()
+
+	userSegments := make([]string, 0, 1)
+	for rows.Next() {
+		var segment string
+		_ = rows.Scan(&segment)
+		userSegments = append(userSegments, segment)
+	}
+	return userSegments, nil
+}
+
+func (u *UserRepo) userExist(ctx context.Context, userID string) (bool, error) {
+	sql, args, _ := u.Builder.
+		Select("user_id").
+		From("users").
+		Where("user_id = ?", userID).
+		ToSql()
+	err := u.Pool.QueryRow(ctx, sql, args...).Scan(&userID)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return false, nil
+		}
+		return false, fmt.Errorf("UserRepo.userExist - u.Pool.QueryRow: %v", err)
+	}
+	return true, nil
 }
 
 func (u *UserRepo) SetSegments(ctx context.Context, userID string, segmentsAdd, segmentsDel []string) error {

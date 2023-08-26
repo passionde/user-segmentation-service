@@ -31,4 +31,13 @@ func (u *UserService) SetSegments(ctx context.Context, input SetSegmentsUserInpu
 	// todo реализовать TTL
 }
 
-// todo: реализовать методы сервиса
+func (u *UserService) GetSegments(ctx context.Context, input GetSegmentsUserInput) ([]string, error) {
+	segments, err := u.userRepo.GetSegments(ctx, input.UserID)
+	if err != nil {
+		if errors.Is(err, repoerrs.ErrUserNotFound) {
+			return nil, ErrUserNotFound
+		}
+		return nil, err
+	}
+	return segments, nil
+}

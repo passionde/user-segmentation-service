@@ -16,7 +16,7 @@ func newUserRoutes(g *echo.Group, userService service.User) {
 		userService: userService,
 	}
 	g.POST("/segments", r.setSegments)
-	g.GET("/", r.getSegments)
+	g.GET("/active-segments", r.getSegments)
 }
 
 type setSegmentsUserInput struct {
@@ -55,6 +55,41 @@ func (u *userRoutes) setSegments(c echo.Context) error {
 	return c.NoContent(200)
 }
 
+type getSegmentsUserInput struct {
+	UserID string `json:"user_id" validate:"required,max=40"`
+}
+
 func (u *userRoutes) getSegments(c echo.Context) error {
-	return nil
+	input := getSegmentsUserInput{
+		UserID: c.QueryParams().Get("user_id"),
+	}
+
+	if err := c.Validate(input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return err
+	}
+
+	segments, err := u.userService.GetSegments(
+		c.Request().Context(),
+		service.GetSegmentsUserInput{UserID: input.UserID},
+	)
+
+	if err != nil {
+		if errors.Is(err, service.ErrUserNotFound) {
+			newErrorResponse(c, http.StatusNotFound, err.Error())
+			return err
+		}
+		newErrorResponse(c, http.StatusInternalServerError, "internal server error")
+		return err
+	}
+
+	type response struct {
+		UserID   string   `json:"user_id"`
+		Segments []string `json:"segments"`
+	}
+
+	return c.JSON(http.StatusOK, response{
+		UserID:   input.UserID,
+		Segments: segments,
+	})
 }

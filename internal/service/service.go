@@ -27,15 +27,12 @@ type SetSegmentsUserInput struct {
 }
 
 type GetSegmentsUserInput struct {
-	// todo: Описать структуру данных для получения сегментов пользователя
-}
-
-type GetSegmentsUserOutput struct {
-	// todo: Описать структуру данных для получения сегментов пользователя
+	UserID string
 }
 
 type User interface {
 	SetSegments(ctx context.Context, input SetSegmentsUserInput) error
+	GetSegments(ctx context.Context, input GetSegmentsUserInput) ([]string, error)
 }
 
 type GetHistoryInput struct {
