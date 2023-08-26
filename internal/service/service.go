@@ -20,7 +20,10 @@ type Segment interface {
 }
 
 type SetSegmentsUserInput struct {
-	// todo: Описать структуру данных для установки сегментов пользователю
+	UserID      string
+	SegmentsAdd []string
+	SegmentsDel []string
+	TTL         uint64
 }
 
 type GetSegmentsUserInput struct {
@@ -32,7 +35,7 @@ type GetSegmentsUserOutput struct {
 }
 
 type User interface {
-	// todo: Описать методы пользователя
+	SetSegments(ctx context.Context, input SetSegmentsUserInput) error
 }
 
 type GetHistoryInput struct {

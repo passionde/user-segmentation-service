@@ -10,19 +10,14 @@ CREATE TABLE segments (
 
 CREATE TABLE user_segments (
     user_id VARCHAR(40) REFERENCES users(user_id),
-    slug VARCHAR REFERENCES segments(slug) ON DELETE CASCADE,
-    PRIMARY KEY (user_id, slug)
-);
-
-CREATE TABLE types_transaction (
-    operation_name VARCHAR PRIMARY KEY,
-    description TEXT
+    segment_slug VARCHAR REFERENCES segments(slug) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, segment_slug)
 );
 
 CREATE TABLE history (
     history_id SERIAL PRIMARY KEY,
     user_id VARCHAR(40) REFERENCES users(user_id),
     segment_slug VARCHAR REFERENCES segments(slug),
-    operation_name VARCHAR REFERENCES types_transaction(operation_name),
+    type VARCHAR(15),
     created_at TIMESTAMP not null default now()
 );

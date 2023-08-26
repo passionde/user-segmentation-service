@@ -7,7 +7,7 @@ import (
 )
 
 type User interface {
-	// todo: перенести методы
+	SetSegments(ctx context.Context, userID string, segmentsAdd, segmentsDel []string) error
 }
 
 type Segment interface {
