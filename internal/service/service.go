@@ -1,19 +1,22 @@
 package service
 
 import (
+	"context"
 	"github.com/passionde/user-segmentation-service/internal/repo"
 )
 
 type CreateSegmentInput struct {
-	// todo: Описать структуру данных для создания сегмента
+	Slug            string
+	PercentageUsers int
 }
 
 type DeleteSegmentInput struct {
-	// todo: Описать структуру данных для удаления сегмента
+	Slug string
 }
 
 type Segment interface {
-	// todo: Описать методы сегментов
+	CreateSegment(ctx context.Context, input CreateSegmentInput) error
+	DeleteSegment(ctx context.Context, input DeleteSegmentInput) error
 }
 
 type SetSegmentsUserInput struct {

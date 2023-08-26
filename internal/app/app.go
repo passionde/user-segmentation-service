@@ -9,6 +9,7 @@ import (
 	"github.com/passionde/user-segmentation-service/internal/service"
 	"github.com/passionde/user-segmentation-service/pkg/httpserver"
 	"github.com/passionde/user-segmentation-service/pkg/postgres"
+	"github.com/passionde/user-segmentation-service/pkg/validator"
 	log "github.com/sirupsen/logrus"
 	"os"
 	"os/signal"
@@ -48,7 +49,7 @@ func Run(configPath string) {
 	log.Info("Initializing handlers and routes...")
 	handler := echo.New()
 	// setup handler validator as lib validator
-	//handler.Validator = validator.NewCustomValidator() todo: вернуться позже
+	handler.Validator = validator.NewCustomValidator()
 	v1.NewRouter(handler, services)
 
 	// HTTP server

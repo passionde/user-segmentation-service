@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"context"
 	"github.com/passionde/user-segmentation-service/internal/repo/pgdb"
 	"github.com/passionde/user-segmentation-service/pkg/postgres"
 )
@@ -10,7 +11,8 @@ type User interface {
 }
 
 type Segment interface {
-	// todo: перенести методы
+	CreateSegment(ctx context.Context, slug string) error
+	DeleteSegment(ctx context.Context, slug string) error
 }
 
 type History interface {
