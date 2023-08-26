@@ -9,6 +9,7 @@ import (
 	"github.com/passionde/user-segmentation-service/internal/service"
 	"github.com/passionde/user-segmentation-service/pkg/httpserver"
 	"github.com/passionde/user-segmentation-service/pkg/postgres"
+	"github.com/passionde/user-segmentation-service/pkg/secure"
 	"github.com/passionde/user-segmentation-service/pkg/validator"
 	log "github.com/sirupsen/logrus"
 	"os"
@@ -41,7 +42,8 @@ func Run(configPath string) {
 	// Services
 	log.Info("Initializing services...")
 	deps := service.ServicesDependencies{
-		Repos: repositories,
+		Repos:     repositories,
+		APISecure: secure.NewSecure(cfg.Secure.Salt),
 	}
 	services := service.NewServices(deps)
 

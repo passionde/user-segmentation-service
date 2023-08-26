@@ -21,7 +21,8 @@ type History interface {
 }
 
 type Auth interface {
-	// todo: перенести методы
+	WriteToken(ctx context.Context, token string) (int, error)
+	TokenExist(ctx context.Context, token string) (int, error)
 }
 
 type Repositories struct {

@@ -1,18 +1,29 @@
 package service
 
-import "github.com/passionde/user-segmentation-service/internal/repo"
+import (
+	"context"
+	"github.com/passionde/user-segmentation-service/internal/repo"
+	"github.com/passionde/user-segmentation-service/pkg/secure"
+)
 
 type AuthService struct {
-	authRepo repo.History
+	authRepo repo.Auth
+	secure   secure.APISecure
 }
 
-func NewAuthService(authRepo repo.Auth) *AuthService {
-	return &AuthService{authRepo: authRepo}
+func NewAuthService(authRepo repo.Auth, secure secure.APISecure) *AuthService {
+	return &AuthService{
+		authRepo: authRepo,
+		secure:   secure,
+	}
 }
 
-func (a *AuthService) ParseKey(string) (int, error) {
-	// todo: реализовать проверку ключа API
-	return 0, nil
+func (a *AuthService) TokenExist(ctx context.Context, token string) (int, error) {
+	return a.authRepo.TokenExist(ctx, a.secure.Hash(token))
 }
 
-// todo: реализовать методы сервиса
+func (a *AuthService) GenerateToken(ctx context.Context) (int, string, error) {
+	token := a.secure.GenerateKey()
+	id, err := a.authRepo.WriteToken(ctx, a.secure.Hash(token))
+	return id, token, err
+}

@@ -14,10 +14,16 @@ CREATE TABLE user_segments (
     PRIMARY KEY (user_id, segment_slug)
 );
 
+CREATE TABLE api_keys (
+    id SERIAL PRIMARY KEY,
+    hash_key VARCHAR
+);
+
 CREATE TABLE history (
     history_id SERIAL PRIMARY KEY,
     user_id VARCHAR(40) REFERENCES users(user_id),
     segment_slug VARCHAR REFERENCES segments(slug),
+    key_id INT REFERENCES api_keys(id),
     type VARCHAR(15),
     created_at TIMESTAMP not null default now()
 );

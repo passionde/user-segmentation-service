@@ -8,10 +8,11 @@ import (
 
 type (
 	Config struct {
-		App  `yaml:"app"`
-		HTTP `yaml:"http"`
-		Log  `yaml:"log"`
-		PG   `yaml:"postgres"`
+		App    `yaml:"app"`
+		HTTP   `yaml:"http"`
+		Log    `yaml:"log"`
+		PG     `yaml:"postgres"`
+		Secure `yaml:"secure"`
 	}
 
 	App struct {
@@ -30,6 +31,10 @@ type (
 	PG struct {
 		MaxPoolSize int    `env-required:"true" yaml:"max_pool_size" env:"PG_MAX_POOL_SIZE"`
 		URL         string `env-required:"true"                      env:"PG_URL"`
+	}
+
+	Secure struct {
+		Salt string `env-required:"true" env:"HASHER_SALT"`
 	}
 )
 

@@ -3,13 +3,12 @@ package v1
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/passionde/user-segmentation-service/internal/service"
-	log "github.com/sirupsen/logrus"
 	"net/http"
 	"strings"
 )
 
 const (
-	userIdCtx = "userId"
+	userIdCtx = "keyId"
 )
 
 type AuthMiddleware struct {
@@ -20,14 +19,12 @@ func (h *AuthMiddleware) UserIdentity(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		token, ok := bearerToken(c.Request())
 		if !ok {
-			log.Errorf("AuthMiddleware.UserIdentity: bearerToken: %v", ErrInvalidAuthHeader)
 			newErrorResponse(c, http.StatusUnauthorized, ErrInvalidAuthHeader.Error())
 			return nil
 		}
 
-		userId, err := h.authService.ParseKey(token)
+		userId, err := h.authService.TokenExist(c.Request().Context(), token)
 		if err != nil {
-			log.Errorf("AuthMiddleware.UserIdentity: h.authService.ParseToken: %v", err)
 			newErrorResponse(c, http.StatusUnauthorized, ErrCannotParseToken.Error())
 			return err
 		}

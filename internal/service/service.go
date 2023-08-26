@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"github.com/passionde/user-segmentation-service/internal/repo"
+	"github.com/passionde/user-segmentation-service/pkg/secure"
 )
 
 type CreateSegmentInput struct {
@@ -48,7 +49,8 @@ type History interface {
 }
 
 type Auth interface {
-	ParseKey(string) (int, error)
+	TokenExist(ctx context.Context, token string) (int, error)
+	GenerateToken(ctx context.Context) (int, string, error)
 }
 
 type Services struct {
@@ -59,7 +61,8 @@ type Services struct {
 }
 
 type ServicesDependencies struct {
-	Repos *repo.Repositories
+	Repos     *repo.Repositories
+	APISecure secure.APISecure
 }
 
 func NewServices(deps ServicesDependencies) *Services {
@@ -67,6 +70,6 @@ func NewServices(deps ServicesDependencies) *Services {
 		User:    NewUserService(deps.Repos.User),
 		Segment: NewSegmentService(deps.Repos.Segment),
 		History: NewHistoryService(deps.Repos.History),
-		Auth:    NewAuthService(deps.Repos.Auth),
+		Auth:    NewAuthService(deps.Repos.Auth, deps.APISecure),
 	}
 }

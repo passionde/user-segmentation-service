@@ -1,6 +1,6 @@
 POST http://localhost:8080/api/v1/segments/create
 Content-Type: application/json
-Authorization: Bearer tutbudettoken
+Authorization: Bearer 06b34023477cbafb61969dac4c8293b631edb5e7c4bfba53b0f6fc263e8aed55
 
 {
   "slug": "AVITO_DISCOUNT_50"
@@ -9,7 +9,7 @@ Authorization: Bearer tutbudettoken
 ###
 DELETE http://localhost:8080/api/v1/segments/delete
 Content-Type: application/json
-Authorization: Bearer tutbudettoken
+Authorization: Bearer 06b34023477cbafb61969dac4c8293b631edb5e7c4bfba53b0f6fc263e8aed55
 
 {
   "slug": "AVITO_DISCOUNT_50"
@@ -18,7 +18,7 @@ Authorization: Bearer tutbudettoken
 ###
 POST http://localhost:8080/api/v1/users/segments
 Content-Type: application/json
-Authorization: Bearer tutbudettoken
+Authorization: Bearer 06b34023477cbafb61969dac4c8293b631edb5e7c4bfba53b0f6fc263e8aed55
 
 {
   "user_id": "b2c03a4c-4409-11ee-be56-0242ac120002",
@@ -35,6 +35,6 @@ Authorization: Bearer tutbudettoken
 ###
 GET http://localhost:8080/api/v1/users/active-segments?user_id=b2c03a4c-4409-11ee-be56-0242ac120002
 Accept: application/json
-Authorization: Bearer tutbudettoken
+Authorization: Bearer 06b34023477cbafb61969dac4c8293b631edb5e7c4bfba53b0f6fc263e8aed55
 
 ###
