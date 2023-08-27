@@ -11,25 +11,40 @@ import (
 type SegmentService struct {
 	segmentRepo repo.Segment
 	historyRepo repo.History
+	userRepo    repo.User
 }
 
-func NewSegmentService(segmentRepo repo.Segment, historyRepo repo.History) *SegmentService {
+func NewSegmentService(segmentRepo repo.Segment, historyRepo repo.History, userRepo repo.User) *SegmentService {
 	return &SegmentService{
 		segmentRepo: segmentRepo,
 		historyRepo: historyRepo,
+		userRepo:    userRepo,
 	}
 }
 
 func (s *SegmentService) CreateSegment(ctx context.Context, input CreateSegmentInput) error {
 	err := s.segmentRepo.CreateSegment(ctx, input.Slug)
-	// todo реализовать метод добавления процента пользователей
 	if err != nil {
 		if errors.Is(err, repoerrs.ErrAlreadyExists) {
 			return ErrSegmentAlreadyExists
 		}
 		return ErrCannotCreateSegment
 	}
-	return nil
+	if input.PercentageUsers <= 0 {
+		return nil
+	}
+
+	usersID, err := s.userRepo.GetRandomUsers(ctx, input.PercentageUsers)
+	if err != nil {
+		return err
+	}
+	for _, userID := range usersID {
+		err := s.userRepo.SetSegments(ctx, userID, []string{input.Slug}, []string{})
+		if err != nil {
+			return err
+		}
+	}
+	return s.historyRepo.AddNotes(ctx, cookNotesSegmentAdd(usersID, input.Slug))
 }
 
 func (s *SegmentService) DeleteSegment(ctx context.Context, input SegmentInput) error {
@@ -45,16 +60,28 @@ func (s *SegmentService) DeleteSegment(ctx context.Context, input SegmentInput) 
 		}
 		return err
 	}
-	return s.historyRepo.AddNotes(ctx, cookNotesSegment(usersID, input.Slug))
+	return s.historyRepo.AddNotes(ctx, cookNotesSegmentDel(usersID, input.Slug))
 }
 
-func cookNotesSegment(usersID []string, segment string) []entity.History {
+func cookNotesSegmentDel(usersID []string, segment string) []entity.History {
 	notes := make([]entity.History, 0, len(usersID))
 	for _, userID := range usersID {
 		notes = append(notes, entity.History{
 			UserID:      userID,
 			SegmentSlug: segment,
 			Type:        entity.OperationTypeSegmentDelete,
+		})
+	}
+	return notes
+}
+
+func cookNotesSegmentAdd(usersID []string, segment string) []entity.History {
+	notes := make([]entity.History, 0, len(usersID))
+	for _, userID := range usersID {
+		notes = append(notes, entity.History{
+			UserID:      userID,
+			SegmentSlug: segment,
+			Type:        entity.OperationTypeAutoAdd,
 		})
 	}
 	return notes

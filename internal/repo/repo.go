@@ -10,6 +10,7 @@ import (
 type User interface {
 	SetSegments(ctx context.Context, userID string, segmentsAdd, segmentsDel []string) error
 	GetSegments(ctx context.Context, userID string) ([]string, error)
+	GetRandomUsers(ctx context.Context, percent int) ([]string, error)
 }
 
 type Segment interface {

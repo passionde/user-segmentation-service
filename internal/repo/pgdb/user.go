@@ -8,6 +8,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/passionde/user-segmentation-service/internal/repo/repoerrs"
 	"github.com/passionde/user-segmentation-service/pkg/postgres"
+	log "github.com/sirupsen/logrus"
 )
 
 type UserRepo struct {
@@ -150,4 +151,41 @@ func (u *UserRepo) delSegmentsUser(ctx context.Context, userID string, segmentSl
 		return fmt.Errorf("UserRepo.addSegmentsUser - u.Pool.QueryRow: %v", err)
 	}
 	return nil
+}
+
+func (u *UserRepo) GetRandomUsers(ctx context.Context, percent int) ([]string, error) {
+	sql, args, _ := u.Builder.
+		Select("COUNT(user_id)").
+		From("users").
+		OrderBy("RANDOM()").
+		ToSql()
+
+	var count float64
+	err := u.Pool.QueryRow(ctx, sql, args...).Scan(&count)
+	if err != nil {
+		return nil, fmt.Errorf("UserRepo.GetRandomUsers - u.Pool.QueryRow: %v", err)
+	}
+
+	choiceCount := uint64((float64(percent) / 10000.0) * count)
+	sql, args, _ = u.Builder.
+		Select("user_id").
+		From("users").
+		OrderBy("RANDOM()").
+		Limit(choiceCount).
+		ToSql()
+
+	log.Debug(sql, choiceCount)
+	rows, err := u.Pool.Query(ctx, sql, args...)
+	if err != nil {
+		return nil, fmt.Errorf("UserRepo.GetRandomUsers - u.Pool.Query: %v", err)
+	}
+	defer rows.Close()
+
+	usersID := make([]string, 0, 1)
+	for rows.Next() {
+		var userID string
+		_ = rows.Scan(&userID)
+		usersID = append(usersID, userID)
+	}
+	return usersID, nil
 }

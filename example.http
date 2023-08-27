@@ -7,12 +7,22 @@ Authorization: Bearer 73068b821f36d1511d6eb0f1a66caafa35bd23ef7294b6eee7ff3eae06
 }
 
 ###
+POST http://localhost:8080/api/v1/segments/create
+Content-Type: application/json
+Authorization: Bearer 73068b821f36d1511d6eb0f1a66caafa35bd23ef7294b6eee7ff3eae06a959c1
+
+{
+  "slug": "AVITO_DISCOUNT_AUTO",
+  "percentageUsers": 8000
+}
+
+###
 DELETE http://localhost:8080/api/v1/segments/delete
 Content-Type: application/json
 Authorization: Bearer 73068b821f36d1511d6eb0f1a66caafa35bd23ef7294b6eee7ff3eae06a959c1
 
 {
-  "slug": "AVITO_DISCOUNT_30"
+  "slug": "AVITO_DISCOUNT_AUTO"
 }
 
 ###
@@ -21,14 +31,10 @@ Content-Type: application/json
 Authorization: Bearer 73068b821f36d1511d6eb0f1a66caafa35bd23ef7294b6eee7ff3eae06a959c1
 
 {
-  "user_id": "b2c03a4c-4409-11ee-be56-0242ac120002",
+  "user_id": "b2c03a4c-4409-11ee-be56-0242ac120011",
   "segments_add": [
-    "AVITO_DISCOUNT_30",
-    "AVITO_DISCOUNT_20",
-    "AVITO_DISCOUNT_10"
   ],
   "segments_del": [
-    "AVITO_DISCOUNT_40"
   ]
 }
 

@@ -69,7 +69,7 @@ type ServicesDependencies struct {
 func NewServices(deps ServicesDependencies) *Services {
 	return &Services{
 		User:    NewUserService(deps.Repos.User, deps.Repos.History),
-		Segment: NewSegmentService(deps.Repos.Segment, deps.Repos.History),
+		Segment: NewSegmentService(deps.Repos.Segment, deps.Repos.History, deps.Repos.User),
 		History: NewHistoryService(deps.Repos.History),
 		Auth:    NewAuthService(deps.Repos.Auth, deps.APISecure),
 	}
