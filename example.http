@@ -39,6 +39,22 @@ Authorization: Bearer 73068b821f36d1511d6eb0f1a66caafa35bd23ef7294b6eee7ff3eae06
 }
 
 ###
+POST http://localhost:8080/api/v1/history/report-link
+Content-Type: application/json
+Authorization: Bearer 73068b821f36d1511d6eb0f1a66caafa35bd23ef7294b6eee7ff3eae06a959c1
+
+{
+  "user_id": "b2c03a4c-4409-11ee-be56-0242ac120011",
+  "year": 2023,
+  "month": 8
+}
+
+###
+GET http://localhost:8080/reports/b2c03a4c-4409-11ee-be56-0242ac120011-2023-8-1693152760.csv
+Accept: application/json
+Authorization: Bearer 73068b821f36d1511d6eb0f1a66caafa35bd23ef7294b6eee7ff3eae06a959c1
+
+###
 GET http://localhost:8080/api/v1/users/active-segments?user_id=b2c03a4c-4409-11ee-be56-0242ac120002
 Accept: application/json
 Authorization: Bearer 73068b821f36d1511d6eb0f1a66caafa35bd23ef7294b6eee7ff3eae06a959c1

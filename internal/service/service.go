@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/passionde/user-segmentation-service/internal/entity"
 	"github.com/passionde/user-segmentation-service/internal/repo"
+	"github.com/passionde/user-segmentation-service/pkg/csvwriter"
 	"github.com/passionde/user-segmentation-service/pkg/secure"
 )
 
@@ -38,15 +39,14 @@ type User interface {
 }
 
 type GetHistoryInput struct {
-	// todo: Описать структуру данных для получения истории пользователя
-}
-
-type GetHistoryOutput struct {
-	// todo: Описать структуру данных для получения истории пользователя
+	UserID string
+	Month  int
+	Year   int
 }
 
 type History interface {
 	AddNotes(ctx context.Context, notes []entity.History) error
+	GetNotes(ctx context.Context, input GetHistoryInput) (string, error)
 }
 
 type Auth interface {
@@ -64,13 +64,14 @@ type Services struct {
 type ServicesDependencies struct {
 	Repos     *repo.Repositories
 	APISecure secure.APISecure
+	CSVWrite  csvwriter.CSVWriter
 }
 
 func NewServices(deps ServicesDependencies) *Services {
 	return &Services{
 		User:    NewUserService(deps.Repos.User, deps.Repos.History),
 		Segment: NewSegmentService(deps.Repos.Segment, deps.Repos.History, deps.Repos.User),
-		History: NewHistoryService(deps.Repos.History),
+		History: NewHistoryService(deps.Repos.History, deps.CSVWrite),
 		Auth:    NewAuthService(deps.Repos.Auth, deps.APISecure),
 	}
 }

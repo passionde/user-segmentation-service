@@ -77,9 +77,9 @@ func (u *userRoutes) getSegments(c echo.Context) error {
 	if err != nil {
 		if errors.Is(err, service.ErrUserNotFound) {
 			newErrorResponse(c, http.StatusNotFound, err.Error())
-			return err
+		} else {
+			newErrorResponse(c, http.StatusInternalServerError, "internal server error")
 		}
-		newErrorResponse(c, http.StatusInternalServerError, "internal server error")
 		return err
 	}
 

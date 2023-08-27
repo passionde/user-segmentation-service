@@ -34,4 +34,27 @@ func (h *HistoryRepo) AddNotes(ctx context.Context, notes []entity.History) erro
 	return nil
 }
 
-// todo: реализовать интерфейс из repo.go
+func (h *HistoryRepo) GetNotes(ctx context.Context, userID string, month, year int) ([]entity.History, error) {
+	sql, args, _ := h.Builder.
+		Select("user_id", "segment_slug", "type", "created_at").
+		From("history").
+		Where("user_id = ? and extract(month from created_at) = ? and extract(year from created_at) = ?", userID, month, year).
+		ToSql()
+
+	rows, err := h.Pool.Query(ctx, sql, args...)
+	if err != nil {
+		return nil, fmt.Errorf("HistoryRepo.GetNotes - r.Pool.Query: %v", err)
+	}
+	defer rows.Close()
+
+	notes := make([]entity.History, 0, 1)
+	for rows.Next() {
+		note := entity.History{}
+		err = rows.Scan(&note.UserID, &note.SegmentSlug, &note.Type, &note.CreatedAt)
+		if err != nil {
+			return nil, fmt.Errorf("HistoryRepo.GetNotes - rows.Scan: %v", err)
+		}
+		notes = append(notes, note)
+	}
+	return notes, nil
+}

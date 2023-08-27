@@ -21,6 +21,7 @@ type Segment interface {
 
 type History interface {
 	AddNotes(ctx context.Context, notes []entity.History) error
+	GetNotes(ctx context.Context, userID string, month, year int) ([]entity.History, error)
 }
 
 type Auth interface {

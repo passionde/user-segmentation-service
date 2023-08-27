@@ -7,6 +7,7 @@ import (
 	v1 "github.com/passionde/user-segmentation-service/internal/controller/http/v1"
 	"github.com/passionde/user-segmentation-service/internal/repo"
 	"github.com/passionde/user-segmentation-service/internal/service"
+	"github.com/passionde/user-segmentation-service/pkg/csvwriter"
 	"github.com/passionde/user-segmentation-service/pkg/httpserver"
 	"github.com/passionde/user-segmentation-service/pkg/postgres"
 	"github.com/passionde/user-segmentation-service/pkg/secure"
@@ -44,6 +45,7 @@ func Run(configPath string) {
 	deps := service.ServicesDependencies{
 		Repos:     repositories,
 		APISecure: secure.NewSecure(cfg.Secure.Salt),
+		CSVWrite:  csvwriter.NewCsvWriter("reports"),
 	}
 	services := service.NewServices(deps)
 

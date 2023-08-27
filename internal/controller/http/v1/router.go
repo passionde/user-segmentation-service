@@ -19,6 +19,11 @@ func NewRouter(handler *echo.Echo, services *service.Services) {
 	//handler.GET("/swagger/*", echoSwagger.WrapHandler)
 	//todo: добавить swagger
 
+	reportsGroup := handler.Group("/reports")
+	{
+		newReportsRoutes(reportsGroup, services.History)
+	}
+
 	authMiddleware := &AuthMiddleware{services.Auth}
 	v1 := handler.Group("/api/v1", authMiddleware.UserIdentity)
 	{

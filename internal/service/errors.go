@@ -7,4 +7,5 @@ var (
 	ErrCannotCreateSegment  = fmt.Errorf("cannot create segment")
 	ErrSegmentNotFound      = fmt.Errorf("segment not found")
 	ErrUserNotFound         = fmt.Errorf("user not found")
+	ErrUserNoData           = fmt.Errorf("this user has no data")
 )
