@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/passionde/user-segmentation-service/internal/entity"
 	"github.com/passionde/user-segmentation-service/internal/repo"
 	"github.com/passionde/user-segmentation-service/pkg/secure"
 )
@@ -11,13 +12,13 @@ type CreateSegmentInput struct {
 	PercentageUsers int
 }
 
-type DeleteSegmentInput struct {
+type SegmentInput struct {
 	Slug string
 }
 
 type Segment interface {
 	CreateSegment(ctx context.Context, input CreateSegmentInput) error
-	DeleteSegment(ctx context.Context, input DeleteSegmentInput) error
+	DeleteSegment(ctx context.Context, input SegmentInput) error
 }
 
 type SetSegmentsUserInput struct {
@@ -45,7 +46,7 @@ type GetHistoryOutput struct {
 }
 
 type History interface {
-	// todo: Описать методы истории
+	AddNotes(ctx context.Context, notes []entity.History) error
 }
 
 type Auth interface {
@@ -67,8 +68,8 @@ type ServicesDependencies struct {
 
 func NewServices(deps ServicesDependencies) *Services {
 	return &Services{
-		User:    NewUserService(deps.Repos.User),
-		Segment: NewSegmentService(deps.Repos.Segment),
+		User:    NewUserService(deps.Repos.User, deps.Repos.History),
+		Segment: NewSegmentService(deps.Repos.Segment, deps.Repos.History),
 		History: NewHistoryService(deps.Repos.History),
 		Auth:    NewAuthService(deps.Repos.Auth, deps.APISecure),
 	}

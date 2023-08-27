@@ -76,7 +76,7 @@ func (s *segmentRoutes) delete(c echo.Context) error {
 		return err
 	}
 
-	err := s.segmentService.DeleteSegment(c.Request().Context(), service.DeleteSegmentInput{
+	err := s.segmentService.DeleteSegment(c.Request().Context(), service.SegmentInput{
 		Slug: input.Slug,
 	})
 	if err != nil {

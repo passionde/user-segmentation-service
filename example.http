@@ -1,40 +1,40 @@
 POST http://localhost:8080/api/v1/segments/create
 Content-Type: application/json
-Authorization: Bearer 06b34023477cbafb61969dac4c8293b631edb5e7c4bfba53b0f6fc263e8aed55
+Authorization: Bearer 73068b821f36d1511d6eb0f1a66caafa35bd23ef7294b6eee7ff3eae06a959c1
 
 {
-  "slug": "AVITO_DISCOUNT_50"
+  "slug": "AVITO_DISCOUNT_30"
 }
 
 ###
 DELETE http://localhost:8080/api/v1/segments/delete
 Content-Type: application/json
-Authorization: Bearer 06b34023477cbafb61969dac4c8293b631edb5e7c4bfba53b0f6fc263e8aed55
+Authorization: Bearer 73068b821f36d1511d6eb0f1a66caafa35bd23ef7294b6eee7ff3eae06a959c1
 
 {
-  "slug": "AVITO_DISCOUNT_50"
+  "slug": "AVITO_DISCOUNT_30"
 }
 
 ###
 POST http://localhost:8080/api/v1/users/segments
 Content-Type: application/json
-Authorization: Bearer 06b34023477cbafb61969dac4c8293b631edb5e7c4bfba53b0f6fc263e8aed55
+Authorization: Bearer 73068b821f36d1511d6eb0f1a66caafa35bd23ef7294b6eee7ff3eae06a959c1
 
 {
   "user_id": "b2c03a4c-4409-11ee-be56-0242ac120002",
   "segments_add": [
-    "AVITO_VOICE_MESSAGES",
-    "AVITO_PERFORMANCE_VAS",
-    "AVITO_DISCOUNT_50"
+    "AVITO_DISCOUNT_30",
+    "AVITO_DISCOUNT_20",
+    "AVITO_DISCOUNT_10"
   ],
   "segments_del": [
-    "AVITO_DISCOUNT_30"
+    "AVITO_DISCOUNT_40"
   ]
 }
 
 ###
 GET http://localhost:8080/api/v1/users/active-segments?user_id=b2c03a4c-4409-11ee-be56-0242ac120002
 Accept: application/json
-Authorization: Bearer 06b34023477cbafb61969dac4c8293b631edb5e7c4bfba53b0f6fc263e8aed55
+Authorization: Bearer 73068b821f36d1511d6eb0f1a66caafa35bd23ef7294b6eee7ff3eae06a959c1
 
 ###

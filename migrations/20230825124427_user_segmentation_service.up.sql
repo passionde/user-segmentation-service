@@ -22,8 +22,7 @@ CREATE TABLE api_keys (
 CREATE TABLE history (
     history_id SERIAL PRIMARY KEY,
     user_id VARCHAR(40) REFERENCES users(user_id),
-    segment_slug VARCHAR REFERENCES segments(slug),
-    key_id INT REFERENCES api_keys(id),
+    segment_slug VARCHAR,
     type VARCHAR(15),
     created_at TIMESTAMP not null default now()
 );

@@ -59,3 +59,25 @@ func (s *SegmentRepo) DeleteSegment(ctx context.Context, slug string) error {
 	}
 	return nil
 }
+
+func (s *SegmentRepo) GetUsersInSegment(ctx context.Context, slug string) ([]string, error) {
+	sql, args, _ := s.Builder.
+		Select("user_id").
+		From("user_segments").
+		Where("segment_slug = ?", slug).
+		ToSql()
+
+	rows, err := s.Pool.Query(ctx, sql, args...)
+	if err != nil {
+		return nil, fmt.Errorf("SegmentRepo.GetUsersInSegment - u.Pool.Query: %v", err)
+	}
+	defer rows.Close()
+
+	usersID := make([]string, 0, 2)
+	for rows.Next() {
+		var id string
+		_ = rows.Scan(&id)
+		usersID = append(usersID, id)
+	}
+	return usersID, nil
+}

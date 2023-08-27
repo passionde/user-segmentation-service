@@ -3,16 +3,21 @@ package service
 import (
 	"context"
 	"errors"
+	"github.com/passionde/user-segmentation-service/internal/entity"
 	"github.com/passionde/user-segmentation-service/internal/repo"
 	"github.com/passionde/user-segmentation-service/internal/repo/repoerrs"
 )
 
 type SegmentService struct {
 	segmentRepo repo.Segment
+	historyRepo repo.History
 }
 
-func NewSegmentService(segmentRepo repo.Segment) *SegmentService {
-	return &SegmentService{segmentRepo: segmentRepo}
+func NewSegmentService(segmentRepo repo.Segment, historyRepo repo.History) *SegmentService {
+	return &SegmentService{
+		segmentRepo: segmentRepo,
+		historyRepo: historyRepo,
+	}
 }
 
 func (s *SegmentService) CreateSegment(ctx context.Context, input CreateSegmentInput) error {
@@ -27,12 +32,30 @@ func (s *SegmentService) CreateSegment(ctx context.Context, input CreateSegmentI
 	return nil
 }
 
-func (s *SegmentService) DeleteSegment(ctx context.Context, input DeleteSegmentInput) error {
-	err := s.segmentRepo.DeleteSegment(ctx, input.Slug)
+func (s *SegmentService) DeleteSegment(ctx context.Context, input SegmentInput) error {
+	usersID, err := s.segmentRepo.GetUsersInSegment(ctx, input.Slug)
+	if err != nil {
+		return err
+	}
+
+	err = s.segmentRepo.DeleteSegment(ctx, input.Slug)
 	if err != nil {
 		if errors.Is(err, repoerrs.ErrNotFound) {
 			return ErrSegmentNotFound
 		}
+		return err
 	}
-	return err
+	return s.historyRepo.AddNotes(ctx, cookNotesSegment(usersID, input.Slug))
+}
+
+func cookNotesSegment(usersID []string, segment string) []entity.History {
+	notes := make([]entity.History, 0, len(usersID))
+	for _, userID := range usersID {
+		notes = append(notes, entity.History{
+			UserID:      userID,
+			SegmentSlug: segment,
+			Type:        entity.OperationTypeSegmentDelete,
+		})
+	}
+	return notes
 }
