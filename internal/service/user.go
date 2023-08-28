@@ -87,6 +87,7 @@ func getSegmentsAdd(segmentsAdd, activeSegments []string) []string {
 			filteredSegments = append(filteredSegments, segment)
 		}
 	}
+	// todo убрать повторы
 	return filteredSegments
 }
 
@@ -97,6 +98,7 @@ func getSegmentsDel(segmentsDel, activeSegments []string) []string {
 			filteredSegments = append(filteredSegments, segment)
 		}
 	}
+	// todo убрать повторы
 	return filteredSegments
 }
 

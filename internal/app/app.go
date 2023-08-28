@@ -32,7 +32,7 @@ func Run(configPath string) {
 	log.Info("Initializing postgres...")
 	pg, err := postgres.New(cfg.PG.URL, postgres.MaxPoolSize(cfg.PG.MaxPoolSize))
 	if err != nil {
-		log.Fatal(fmt.Errorf("app - Run - pgdb.NewServices: %w", err))
+		log.Fatal(fmt.Errorf("app - Run - postgres.New: %w", err))
 	}
 	defer pg.Close()
 

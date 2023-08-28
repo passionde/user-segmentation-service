@@ -12,6 +12,7 @@ type (
 		HTTP   `yaml:"http"`
 		Log    `yaml:"log"`
 		PG     `yaml:"postgres"`
+		AMQP   `yaml:"amqp"`
 		Secure `yaml:"secure"`
 	}
 
@@ -31,6 +32,10 @@ type (
 	PG struct {
 		MaxPoolSize int    `env-required:"true" yaml:"max_pool_size" env:"PG_MAX_POOL_SIZE"`
 		URL         string `env-required:"true"                      env:"PG_URL"`
+	}
+
+	AMQP struct {
+		URL string `env-required:"true"                      env:"AMQP_URL"`
 	}
 
 	Secure struct {
