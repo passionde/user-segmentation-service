@@ -34,6 +34,7 @@ func (s *SegmentService) CreateSegment(ctx context.Context, input CreateSegmentI
 		return nil
 	}
 
+	// todo вынести в фоновый процесс с использование RabbitMQ
 	usersID, err := s.userRepo.GetRandomUsers(ctx, input.PercentageUsers)
 	if err != nil {
 		return err

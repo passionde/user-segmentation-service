@@ -69,9 +69,9 @@ func existCommand(services *service.Services, token string) {
 }
 
 func generateCommand(services *service.Services) {
-	id, key, err := services.Auth.GenerateToken(context.TODO())
+	_, key, err := services.Auth.GenerateToken(context.TODO())
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Api key: %s\nID: %d\n", key, id)
+	fmt.Printf("Api key: Bearer %s\n", key)
 }

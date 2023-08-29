@@ -26,3 +26,11 @@ CREATE TABLE history (
     type VARCHAR(15),
     created_at TIMESTAMP not null default now()
 );
+
+CREATE TABLE tasks_delete (
+    task_id SERIAL PRIMARY KEY,
+    user_id VARCHAR(40) REFERENCES users(user_id),
+    segment_slug VARCHAR,
+    deadline TIMESTAMP not null,
+    done BOOLEAN default false
+);

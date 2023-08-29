@@ -10,12 +10,14 @@ import (
 
 type UserService struct {
 	userRepo    repo.User
+	taskDelete  repo.TaskDelete
 	historyRepo repo.History
 }
 
-func NewUserService(userRepo repo.User, historyRepo repo.History) *UserService {
+func NewUserService(userRepo repo.User, historyRepo repo.History, taskDelete repo.TaskDelete) *UserService {
 	return &UserService{
 		userRepo:    userRepo,
+		taskDelete:  taskDelete,
 		historyRepo: historyRepo,
 	}
 }
@@ -41,9 +43,13 @@ func (u *UserService) SetSegments(ctx context.Context, input SetSegmentsUserInpu
 		}
 		return err
 	}
-
+	if input.TTL > 0 {
+		if err := u.taskDelete.CreateTasks(ctx, cookTasks(input, activeSegments), input.TTL); err != nil {
+			return err
+		}
+	}
 	return u.historyRepo.AddNotes(ctx, cookNotesUser(input, activeSegments))
-	// todo реализовать TTL
+
 }
 
 func (u *UserService) GetSegments(ctx context.Context, input GetSegmentsUserInput) ([]string, error) {
@@ -80,25 +86,35 @@ func cookNotesUser(input SetSegmentsUserInput, activeSegments []string) []entity
 	return notes
 }
 
+func cookTasks(input SetSegmentsUserInput, activeSegments []string) []entity.Task {
+	segmentsAdd := getSegmentsAdd(input.SegmentsAdd, activeSegments)
+	tasks := make([]entity.Task, 0, len(segmentsAdd))
+	for _, segment := range segmentsAdd {
+		tasks = append(tasks, entity.Task{
+			UserID:      input.UserID,
+			SegmentSlug: segment,
+		})
+	}
+	return tasks
+}
+
 func getSegmentsAdd(segmentsAdd, activeSegments []string) []string {
 	filteredSegments := make([]string, 0, 2)
 	for _, segment := range segmentsAdd {
-		if !contains(activeSegments, segment) {
+		if !contains(activeSegments, segment) && !contains(filteredSegments, segment) {
 			filteredSegments = append(filteredSegments, segment)
 		}
 	}
-	// todo убрать повторы
 	return filteredSegments
 }
 
 func getSegmentsDel(segmentsDel, activeSegments []string) []string {
 	filteredSegments := make([]string, 0, 2)
 	for _, segment := range segmentsDel {
-		if contains(activeSegments, segment) {
+		if contains(activeSegments, segment) && !contains(filteredSegments, segment) {
 			filteredSegments = append(filteredSegments, segment)
 		}
 	}
-	// todo убрать повторы
 	return filteredSegments
 }
 

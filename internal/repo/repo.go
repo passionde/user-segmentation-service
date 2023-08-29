@@ -24,6 +24,12 @@ type History interface {
 	GetNotes(ctx context.Context, userID string, month, year int) ([]entity.History, error)
 }
 
+type TaskDelete interface {
+	GetExpiredTasks(ctx context.Context) ([]entity.Task, error)
+	ChangeStatusTasks(ctx context.Context, tasks []entity.Task) error
+	CreateTasks(ctx context.Context, tasks []entity.Task, ttl uint64) error
+}
+
 type Auth interface {
 	WriteToken(ctx context.Context, token string) (int, error)
 	TokenExist(ctx context.Context, token string) (int, error)
@@ -33,14 +39,16 @@ type Repositories struct {
 	User
 	Segment
 	History
+	TaskDelete
 	Auth
 }
 
 func NewRepositories(pg *postgres.Postgres) *Repositories {
 	return &Repositories{
-		User:    pgdb.NewUserRepo(pg),
-		Segment: pgdb.NewSegmentRepo(pg),
-		History: pgdb.NewHistoryRepo(pg),
-		Auth:    pgdb.NewAuthRepo(pg),
+		User:       pgdb.NewUserRepo(pg),
+		Segment:    pgdb.NewSegmentRepo(pg),
+		History:    pgdb.NewHistoryRepo(pg),
+		TaskDelete: pgdb.NewTasksDeleteRepo(pg),
+		Auth:       pgdb.NewAuthRepo(pg),
 	}
 }

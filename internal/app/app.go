@@ -67,7 +67,6 @@ func Run(configPath string) {
 	// Echo
 	log.Info("Initializing handlers and routes...")
 	handler := echo.New()
-	// setup handler validator as lib validator
 	handler.Validator = validator.NewCustomValidator()
 	v1.NewRouter(handler, services)
 
@@ -75,6 +74,10 @@ func Run(configPath string) {
 	log.Info("Starting http server...")
 	log.Debugf("Server port: %s", cfg.HTTP.Port)
 	httpServer := httpserver.New(handler, httpserver.Port(cfg.HTTP.Port))
+
+	// Background worker
+	log.Info("Starting a worker...")
+	go RunWorker(services)
 
 	// Waiting signal
 	log.Info("Configuring graceful shutdown...")

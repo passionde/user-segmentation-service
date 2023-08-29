@@ -49,16 +49,23 @@ type History interface {
 	GetNotes(ctx context.Context, input GetHistoryInput) (string, error)
 }
 
+type TaskDelete interface {
+	GetExpiredTasks(ctx context.Context) ([]entity.Task, error)
+	CompleteTasks(ctx context.Context, tasks []entity.Task, callback func([]entity.Task) error) error
+	CreateTasks(ctx context.Context, tasks []entity.Task, ttl uint64) error
+}
+
 type Auth interface {
 	TokenExist(ctx context.Context, token string) (int, error)
 	GenerateToken(ctx context.Context) (int, string, error)
 }
 
 type Services struct {
-	User    User
-	Segment Segment
-	History History
-	Auth    Auth
+	User       User
+	Segment    Segment
+	History    History
+	TaskDelete TaskDelete
+	Auth       Auth
 }
 
 type ServicesDependencies struct {
@@ -69,9 +76,10 @@ type ServicesDependencies struct {
 
 func NewServices(deps ServicesDependencies) *Services {
 	return &Services{
-		User:    NewUserService(deps.Repos.User, deps.Repos.History),
-		Segment: NewSegmentService(deps.Repos.Segment, deps.Repos.History, deps.Repos.User),
-		History: NewHistoryService(deps.Repos.History, deps.CSVWrite),
-		Auth:    NewAuthService(deps.Repos.Auth, deps.APISecure),
+		User:       NewUserService(deps.Repos.User, deps.Repos.History, deps.Repos.TaskDelete),
+		Segment:    NewSegmentService(deps.Repos.Segment, deps.Repos.History, deps.Repos.User),
+		History:    NewHistoryService(deps.Repos.History, deps.CSVWrite),
+		TaskDelete: NewTasksDeleteService(deps.Repos.TaskDelete),
+		Auth:       NewAuthService(deps.Repos.Auth, deps.APISecure),
 	}
 }

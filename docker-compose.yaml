@@ -13,14 +13,6 @@ services:
       - "5432:5432"
     restart: unless-stopped
 
-  rabbitmq:
-    container_name: rabbitmq
-    image: rabbitmq:management
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    restart: unless-stopped
-
   app:
     container_name: app
     build: .
@@ -33,7 +25,6 @@ services:
       - "${HTTP_PORT}:${HTTP_PORT}"
     depends_on:
       - postgres
-      - rabbitmq
     restart: unless-stopped
 
 volumes:
