@@ -66,17 +66,17 @@ func (u *UserRepo) userExist(ctx context.Context, userID string) (bool, error) {
 }
 
 func (u *UserRepo) SetSegments(ctx context.Context, userID string, segmentsAdd, segmentsDel []string) error {
-	userID, err := u.createUserIfNotExist(ctx, userID)
-	if err != nil {
-		return fmt.Errorf("UserRepo.SetSegments - u.createUserIfNotExist: %v", err)
-	}
-
 	ok, err := u.checkExistSegmentsSlug(ctx, segmentsAdd)
 	if err != nil {
 		return fmt.Errorf("UserRepo.SetSegments - u.checkExistSegmentsSlug: %v", err)
 	}
 	if !ok {
 		return repoerrs.ErrSegmentsNotExist
+	}
+
+	userID, err = u.createUserIfNotExist(ctx, userID)
+	if err != nil {
+		return fmt.Errorf("UserRepo.SetSegments - u.createUserIfNotExist: %v", err)
 	}
 
 	if err := u.addSegmentsUser(ctx, userID, segmentsAdd); err != nil {
