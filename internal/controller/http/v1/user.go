@@ -26,6 +26,19 @@ type setSegmentsUserInput struct {
 	TTL         uint64   `json:"ttl" validate:"omitempty,min=1,max=18446744073709551615"`
 }
 
+// @Summary Обновление сегментов пользователя
+// @Description Этот эндпоинт позволяет обновить сегменты, к которым принадлежит пользователь.
+// @Tags Users
+// @ID setSegments
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "API KEY для аутентификации"
+// @Param input body setSegmentsUserInput true "Данные для обновления сегментов пользователя"
+// @Success 200 "Успешная операция"
+// @Failure 400 {object} echo.HTTPError "Некорректный запрос или данные"
+// @Failure 404 {object} echo.HTTPError "Сегмент не найден"
+// @Failure 500 {object} echo.HTTPError "Внутренняя ошибка сервера"
+// @Router /api/v1/users/segments [post]
 func (u *userRoutes) setSegments(c echo.Context) error {
 	var input setSegmentsUserInput
 
@@ -59,6 +72,24 @@ type getSegmentsUserInput struct {
 	UserID string `json:"user_id" validate:"required,max=40"`
 }
 
+type getSegmentsUserResponse struct {
+	UserID   string   `json:"user_id"`
+	Segments []string `json:"segments"`
+}
+
+// @Summary Получение активных сегментов пользователя
+// @Description Этот эндпоинт позволяет получить список сегментов, к которым принадлежит пользователь.
+// @Tags Users
+// @ID getSegments
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "API KEY для аутентификации"
+// @Param user_id query string true "Идентификатор пользователя"
+// @Success 200 {object} getSegmentsUserResponse "Успешное выполнение"
+// @Failure 400 {object} echo.HTTPError "Некорректный запрос или данные"
+// @Failure 404 {object} echo.HTTPError "Пользователь не найден"
+// @Failure 500 {object} echo.HTTPError "Внутренняя ошибка сервера"
+// @Router /api/v1/users/active-segments [get]
 func (u *userRoutes) getSegments(c echo.Context) error {
 	input := getSegmentsUserInput{
 		UserID: c.QueryParams().Get("user_id"),
@@ -83,12 +114,7 @@ func (u *userRoutes) getSegments(c echo.Context) error {
 		return err
 	}
 
-	type response struct {
-		UserID   string   `json:"user_id"`
-		Segments []string `json:"segments"`
-	}
-
-	return c.JSON(http.StatusOK, response{
+	return c.JSON(http.StatusOK, getSegmentsUserResponse{
 		UserID:   input.UserID,
 		Segments: segments,
 	})

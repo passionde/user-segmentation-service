@@ -25,6 +25,23 @@ type getHistoryInput struct {
 	Month  int    `json:"month" validate:"required"`
 }
 
+type getHistoryResponse struct {
+	UserID     string `json:"user_id"`
+	ReportLink string `json:"report_link"`
+}
+
+// @Summary Получение ссылки на CSV отчет
+// @Description Этот эндпоинт позволяет получить ссылку на CSV отчет по пользователю за определенный месяц и год.
+// @Tags History
+// @ID getReportLink
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "API KEY для аутентификации"
+// @Param input body getHistoryInput true "Данные для получения ссылки на отчет"
+// @Success 200 {object} getHistoryResponse "Успешное выполнение"
+// @Failure 400 {object} echo.HTTPError "Некорректный запрос или у пользователя отсутствует история за указанный период"
+// @Failure 500 {object} echo.HTTPError "Внутренняя ошибка сервера"
+// @Router /api/v1/history/report-link [post]
 func (h *historyRoutes) reportLink(c echo.Context) error {
 	var input getHistoryInput
 	if err := c.Bind(&input); err != nil {
@@ -55,12 +72,7 @@ func (h *historyRoutes) reportLink(c echo.Context) error {
 		return err
 	}
 
-	type response struct {
-		UserID     string `json:"user_id"`
-		ReportLink string `json:"report_link"`
-	}
-
-	return c.JSON(http.StatusOK, response{
+	return c.JSON(http.StatusOK, getHistoryResponse{
 		UserID:     input.UserID,
 		ReportLink: fmt.Sprintf("http://%s/reports/%s", c.Request().Host, filename),
 	})

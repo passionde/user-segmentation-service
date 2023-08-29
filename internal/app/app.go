@@ -18,6 +18,21 @@ import (
 	"syscall"
 )
 
+// @title           User Segmentation Service
+// @version         1.0
+// @description     This service is for dynamic segmentation of users and reporting on changes in active segments.
+
+// @contact.name   Onofriychuk Yaroslav
+// @contact.email  yrikdev@bk.ru
+
+// @host      localhost:8080
+// @BasePath  /
+
+// @securityDefinitions.apikey  APIKey
+// @in                          header
+// @name                        Authorization
+// @description                 API KEY for authentication
+
 func Run(configPath string) {
 	// Config
 	cfg, err := config.NewConfig(configPath)
